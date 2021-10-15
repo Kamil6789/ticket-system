@@ -6,10 +6,10 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: "/",
-        name: "Index",
-        component: () => import("./views/pages/Index.vue"),
+        name: "Login",
+        component: () => import("./views/pages/Login.vue"),
         meta: {
-            title: "Index"
+            title: "Login"
         }
     },
     {
