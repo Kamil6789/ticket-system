@@ -12,6 +12,7 @@
 import Footer from "./views/components/Footer.vue"
 
 import "./assets/css/main.css"
+import "./assets/css/login.css"
 
 import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap/dist/js/bootstrap.js"

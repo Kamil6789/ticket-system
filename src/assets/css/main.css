@@ -1,0 +1,12 @@
+* {
+    margin: 0;
+}
+
+html, body {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+input, button {
+    box-shadow: none !important;
+}
