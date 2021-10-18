@@ -19,7 +19,8 @@
                                     <label for="password">Hasło</label>
                                     <input type="password" name="password" v-model="login.password" class="form-control text-center" placeholder="*********" autocomplete="current-password" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary m-2 d-block float-end">Zaloguj</button>
+                                <button v-if="loading" type="submit" class="btn btn-primary m-2 d-block float-end" disabled><Loader v-if="loading" class="d-inline-block" color="white" :size="10" sizeUnit="px" /></button>
+                                <button v-else type="submit" class="btn btn-primary m-2 d-block float-end">Zaloguj</button>
                             </form>
                         </b-tab>
 
@@ -28,6 +29,7 @@
                                 <i class="fas fa-user-plus"></i> Rejestracja
                             </template>
                             <h2 class="h5 m-3">Zarejestruj się</h2>
+                            <b-alert v-if="register.status" variant="danger" show>{{messages[register.status]}}</b-alert>
                             <form @submit.prevent="submit_register">
                                 <div class="form-group m-2">
                                     <label for="username">Nazwa</label>
@@ -45,8 +47,8 @@
                                     <label for="password">Powtórz hasło</label>
                                     <input type="password" name="repeat_password" v-model="register.repeat_password" class="form-control text-center" placeholder="********" autocomplete="new-password" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary m-2 d-block float-end">Zarejestruj</button>
-                            </form>
+                                <button v-if="loading" type="submit" class="btn btn-primary m-2 d-block float-end" disabled><Loader v-if="loading" class="d-inline-block" color="white" :size="10" sizeUnit="px" /></button>
+                                <button v-else type="submit" class="btn btn-primary m-2 d-block float-end">Zarejestruj</button>                            </form>
                         </b-tab>
                             
                     </b-tabs>
@@ -59,18 +61,27 @@
 
 <script>
 import {ParticlesBg} from "particles-bg-vue";
+import {PulseLoader} from "@saeris/vue-spinners"
 
 export default {
     name: "Login",
     components: {
-        ParticlesBg
+        ParticlesBg,
+        Loader: PulseLoader
     },
     methods: {
         submit_login: async function() {
-            console.log("Login")
+            this.loading = true;
+            if(!this.login.email || !this.login.password) return;
+            console.log("Login");
+            this.loading = false;
         },
         submit_register: async function() {
+            this.loading = true;
+            if(!this.register.username || !this.register.email || !this.register.password || !this.register.repeat_password) return;
+            if(this.register.password !== this.register.repeat_password) return this.register.status = "PASSWORD_NOT_MATCH";
             console.log("Register")
+            this.loading = false;
         }
     },
     data() {
@@ -78,12 +89,18 @@ export default {
             login: {
                 email: null,
                 password: null,
+                status: null,
             },
             register: {
                 username: null,
                 email: null,
                 password: null,
                 repeat_password: null,
+                status: null
+            },
+            loading: false,
+            messages: {
+                PASSWORD_NOT_MATCH: "Hasła się nie zgadzają."
             }
         }
     }
