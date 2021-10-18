@@ -3,13 +3,10 @@
         <main role="main">
             <router-view />
         </main>
-        <Footer />
     </div>
 </template>
 
 <script>
-
-import Footer from "./views/components/Footer.vue"
 
 import "./assets/css/main.css"
 import "./assets/css/login.css"
@@ -21,6 +18,6 @@ import "bootstrap/dist/js/bootstrap.min.js"
 
 export default {
     name: "App",
-    components: {Footer}
+    components: {}
 }
 </script>
