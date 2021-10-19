@@ -275,6 +275,7 @@ module.exports = {
     initializeDatabase,
     User,
     ACCOUNT_TYPE,
+    hashPassword,
     createUser,
     updateUser,
     getAllUsers,
