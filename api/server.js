@@ -1,11 +1,34 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const cookieSession = require('cookie-session');
+const flash = require('connect-flash');
+const cors = require('cors');
+
 const app = express();
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+app.use(cookieSession({secret: 'somesecrettokenhere'}));
+app.use(flash());
+app.use(cors());
 
 require('dotenv').config();
 
-const database = require('./database');
+require('./routes/users')(app);
 
-app.get('/api/tickets', (req, res) => {
+const database = require('./database');
+const {checkAuth} = require('./utils');
+
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+ 
+passport.deserializeUser(function(user, done) {
+    done(null, user);
+});
+
+app.get('/api/tickets', checkAuth, (req, res) => {
     if (!req.query.id) {
         database.getAllTickets().then(tickets => res.send(tickets)).catch(error => console.error(error));
     } else {
@@ -13,7 +36,7 @@ app.get('/api/tickets', (req, res) => {
     }
 });
 
-app.get('/api/users', (req, res) => {
+app.get('/api/users', checkAuth, (req, res) => {
     if (!req.query.id) {
         database.getAllUsers().then(users => res.send(users)).catch(error => console.error(error));
     } else {
