@@ -10,6 +10,7 @@
                                 <i class="fas fa-sign-in-alt"></i> Logowanie
                             </template>
                             <h2 class="h5 m-3">Zaloguj się</h2>
+                            <b-alert v-if="login.status" :variant="messages[login.status].type" show>{{messages[login.status].message}}</b-alert>
                             <form @submit.prevent="submit_login">
                                 <div class="form-group m-2">
                                     <label for="email">Email</label>
@@ -29,7 +30,7 @@
                                 <i class="fas fa-user-plus"></i> Rejestracja
                             </template>
                             <h2 class="h5 m-3">Zarejestruj się</h2>
-                            <b-alert v-if="register.status" variant="danger" show>{{messages[register.status]}}</b-alert>
+                            <b-alert v-if="register.status" :variant="messages[register.status].type" show>{{messages[register.status].message}}</b-alert>
                             <form @submit.prevent="submit_register">
                                 <div class="form-group m-2">
                                     <label for="username">Nazwa</label>
@@ -55,7 +56,7 @@
                 </div>
             </div>
         </div>
-        <particles-bg class="z-index-1" type="tadpole" :canvas="{backgroundColor:'#888'}" :bg="true" />
+        <particles-bg class="z-index-1" type="thick" :canvas="{backgroundColor:'#888'}" :bg="true" />
     </header>
 </template>
 
@@ -73,15 +74,32 @@ export default {
         submit_login: async function() {
             this.loading = true;
             if(!this.login.email || !this.login.password) return;
-            console.log("Login");
-            this.loading = false;
+            const {email, password} = this.login;
+            const res = await fetch("/api/user/login", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({email, password})
+            });
+            const body = await res.json();
+            body.success ? this.$router.push("/panel") : this.login.status = body.error;
+            return this.loading = false;
         },
         submit_register: async function() {
             this.loading = true;
             if(!this.register.username || !this.register.email || !this.register.password || !this.register.repeat_password) return;
-            if(this.register.password !== this.register.repeat_password) return this.register.status = "PASSWORD_NOT_MATCH";
-            console.log("Register")
-            this.loading = false;
+            if(this.register.password !== this.register.repeat_password) {
+                this.register.status = "PASSWORD_NOT_MATCH";
+                return this.loading = false;
+            }
+            const {username, email, password} = this.register;
+            const res = await fetch("/api/user/register", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({username, email, password})
+            });
+            const body = await res.json();
+            this.register.status = body.success ? "REGISTER_SUCCESS" : body.error;
+            return this.loading = false;
         }
     },
     data() {
@@ -100,7 +118,30 @@ export default {
             },
             loading: false,
             messages: {
-                PASSWORD_NOT_MATCH: "Hasła się nie zgadzają."
+                PASSWORD_NOT_MATCH: {
+                    message: "Hasła się nie zgadzają.",
+                    type: "danger"
+                },
+                INCORRECT_DATA: {
+                    message: "Nie podano wszystkich danych lub są one zbyt obszerne.",
+                    type: "danger"
+                },
+                UNKNOWN_ERROR: {
+                    message: "Wystąpił nieznany błąd.",
+                    type: "danger"
+                },
+                USER_ALREADY_EXISTS: {
+                    message: "Konto z takimi danymi już jest zarejestrowane.",
+                    type: "danger"
+                },
+                REGISTER_SUCCESS: {
+                    message: "Zarejestrowano pomyślnie. Teraz możesz się zalogować.",
+                    type: "success"
+                },
+                WRONG_PASSWORD: {
+                    message: "Podane dane logowania są nieprawidłowe.",
+                    type: "danger"
+                }
             }
         }
     }

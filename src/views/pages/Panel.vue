@@ -26,7 +26,7 @@
         <div v-else>
             <h1 class="text-center m-5">Ładowanie</h1>
         </div>
-        <particles-bg class="z-index-1" type="tadpole" :canvas="{backgroundColor:'#888'}" :bg="true" />
+        <particles-bg class="z-index-1" type="thick" :canvas="{backgroundColor:'#888'}" :bg="true" />
     </div>
 </template>
 

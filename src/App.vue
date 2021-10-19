@@ -18,6 +18,12 @@ import "bootstrap/dist/js/bootstrap.min.js"
 
 export default {
     name: "App",
-    components: {}
+    components: {},
+    async created() {
+        const res = await fetch("/api/user/info");
+        const body = await res.json();
+        if(body.success && window.location.pathname == "/") this.$router.push("/panel");
+        else if(window.location.pathname.startsWith("/panel") && !body.success) this.$router.push("/");
+    }
 }
 </script>
