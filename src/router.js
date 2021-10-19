@@ -13,6 +13,14 @@ const routes = [
         }
     },
     {
+        path: "/panel",
+        name: "Panel",
+        component: () => import("./views/pages/Panel.vue"),
+        meta: {
+            title: "Panel zgłoszeń"
+        }
+    },
+    {
         path: "*",
         name: "404",
         component: () => import("./views/errors/Error404.vue"),
