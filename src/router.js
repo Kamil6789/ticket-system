@@ -21,6 +21,14 @@ const routes = [
         }
     },
     {
+        path: "/ticket",
+        name: "Ticket",
+        component: () => import("./views/pages/Ticket.vue"),
+        meta: {
+            title: "Zgłoszenie"
+        }
+    },
+    {
         path: "*",
         name: "404",
         component: () => import("./views/errors/Error404.vue"),
