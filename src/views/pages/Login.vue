@@ -48,6 +48,9 @@
                                     <label for="password">Powtórz hasło</label>
                                     <input type="password" name="repeat_password" v-model="register.repeat_password" class="form-control text-center" placeholder="********" autocomplete="new-password" required>
                                 </div>
+                                <div class="form-group m-3">
+                                    <h-captcha site-key="f9d25138-59f7-49e8-8dd0-909c605ee6f3" @verified="onCaptchaVerified"></h-captcha>
+                                </div>
                                 <button v-if="loading" type="submit" class="btn btn-primary m-2 d-block float-end" disabled><Loader v-if="loading" class="d-inline-block" color="white" :size="10" sizeUnit="px" /></button>
                                 <button v-else type="submit" class="btn btn-primary m-2 d-block float-end">Zarejestruj</button>                            </form>
                         </b-tab>
@@ -87,19 +90,26 @@ export default {
         submit_register: async function() {
             this.loading = true;
             if(!this.register.username || !this.register.email || !this.register.password || !this.register.repeat_password) return;
+            if(!this.register.captcha) {
+                this.register.status = "EMPTY_CAPTCHA";
+                return this.loading = false;
+            }
             if(this.register.password !== this.register.repeat_password) {
                 this.register.status = "PASSWORD_NOT_MATCH";
                 return this.loading = false;
             }
-            const {username, email, password} = this.register;
+            const {username, email, password, captcha} = this.register;
             const res = await fetch("/api/user/register", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({username, email, password})
+                body: JSON.stringify({username, email, password, captcha})
             });
             const body = await res.json();
             this.register.status = body.success ? "REGISTER_SUCCESS" : body.error;
             return this.loading = false;
+        },
+        onCaptchaVerified: function(e) {
+            this.register.captcha = e.key;
         }
     },
     data() {
@@ -114,6 +124,7 @@ export default {
                 email: null,
                 password: null,
                 repeat_password: null,
+                captcha: null,
                 status: null
             },
             loading: false,
@@ -132,6 +143,10 @@ export default {
                 },
                 USER_ALREADY_EXISTS: {
                     message: "Konto z takimi danymi już jest zarejestrowane.",
+                    type: "danger"
+                },
+                EMPTY_CAPTCHA: {
+                    message: "Nie rozwiązano captcha.",
                     type: "danger"
                 },
                 REGISTER_SUCCESS: {
