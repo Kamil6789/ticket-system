@@ -10,3 +10,7 @@ html, body {
 input, button {
     box-shadow: none !important;
 }
+
+h1.err, h2.err {
+    text-shadow: 2px 2px 5px black;
+}
