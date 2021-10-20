@@ -20,8 +20,11 @@ module.exports = function(app) {
         function(req, email, password, done) {
             process.nextTick(async function() {
                 try {
-                    const user = await database.getUserByEmail(email);
+                    let user = await database.getUserByEmail(email);
                     if(user.password !== database.hashPassword(password)) return done(null, false, req.flash('message', 'WRONG_PASSWORD'));
+                    user.lastLogin = Date.now();
+                    user.address = (req.headers['x-forwarded-for'].split(','))[0];
+                    database.updateUser(user);
                     return done(null, user);
                 } catch(err) {
                     if(err.message == 'User does not exist!') return done(null, false, req.flash('message', 'WRONG_PASSWORD'));
@@ -36,7 +39,7 @@ module.exports = function(app) {
         try {
             const captcha = await verify(process.env.captcha, req.body.captcha);
             if(!captcha.success) return res.json({success: false, error: 'EMPTY_CAPTCHA'});
-            const user = await database.createUser(req.body.email, req.body.password, req.body.username);
+            const user = await database.createUser(req.body.email, req.body.password, req.body.username, 1, Date.now(), Date.now(), (req.headers['x-forwarded-for'].split(','))[0]);
             return res.json({success: true});
         } catch(err) {
             if(err.message == 'User already exists!') return res.json({success: false, error: 'USER_ALREADY_EXISTS'});

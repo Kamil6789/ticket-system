@@ -26,7 +26,10 @@ async function initializeDatabase() {
                 email VARCHAR(255) NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 username VARCHAR(255) NOT NULL,
-                type INTEGER DEFAULT ${ACCOUNT_TYPE.USER}
+                type INTEGER DEFAULT ${ACCOUNT_TYPE.USER},
+                created TIMESTAMP NOT NULL,
+                lastLogin TIMESTAMP NOT NULL,
+                address VARCHAR(60) NOT NULL
             );`, (error) => {
                 if (error) reject(error);
                 resolve();
@@ -41,14 +44,20 @@ class User {
     email;
     password;
     username;
-    type
+    type;
+    created;
+    lastLogin;
+    address
 
-    constructor(id, email, password, username, type = ACCOUNT_TYPE.USER) {
+    constructor(id, email, password, username, type = ACCOUNT_TYPE.USER, created, lastLogin, address) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.username = username;
         this.type = type;
+        this.created = created,
+        this.lastLogin = lastLogin,
+        this.address = address
     }
 }
 
@@ -85,7 +94,7 @@ async function getNextTechnician() {
     });
 }
 
-async function createUser(email, password, username) {
+async function createUser(email, password, username, type, created, lastLogin, address) {
     return new Promise((resolve, reject) => {
         getUserByEmail(email).then(user => {
             reject(new Error(ERROR.USER_ALREADY_EXISTS));
@@ -94,12 +103,12 @@ async function createUser(email, password, username) {
                 generateNextUserId().then(id => {
                     database.run(`
                     INSERT INTO users (
-                        id, email, password, username
+                        id, email, password, username, type, created, lastLogin, address
                     ) VALUES (
-                        ?, ?, ?, ?
-                    );`, [id, email, hashPassword(password), username], (error) => {
+                        ?, ?, ?, ?, ?, ?, ?, ?
+                    );`, [id, email, hashPassword(password), username, type, created, lastLogin, address], (error) => {
                         if (error) reject(error);
-                        resolve(new User(id, email, hashPassword(password), username));
+                        resolve(new User(id, email, hashPassword(password), username, type, created, lastLogin, address));
                     });
                 }).catch(error => reject(error));
             } else {
@@ -113,9 +122,9 @@ async function updateUser(user) {
     return new Promise((resolve, reject) => {
         database.run(`
         UPDATE users SET
-            email = ?, password = ?, username = ?, type = ?
+            email = ?, password = ?, username = ?, type = ?, lastLogin = ?, address = ?
         WHERE id = ?;
-        `, [user.email, user.password, user.username, user.type, user.id], (error) => {
+        `, [user.email, user.password, user.username, user.type, user.lastLogin, user.address, user.id], (error) => {
             if (error) reject(error);
             resolve(user);
         });

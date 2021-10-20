@@ -50,12 +50,12 @@ app.listen(process.env.SERVER_PORT || 3000, () => {
         console.log('Database successfully initialized!');
 
         // Testowe konta i zgłoszenia
-        await database.createUser('aleksander.nowak@email.com', 'password', 'Aleksander Nowak').then(user => {
+        await database.createUser('aleksander.nowak@email.com', 'password', 'Aleksander Nowak', 1, Date.now(), Date.now(), '127.0.0.1').then(user => {
             user.type = database.ACCOUNT_TYPE.TECHNICIAN;
             database.updateUser(user).catch(error => console.error(error));
         }).catch(error => console.error(error));
 
-        await database.createUser('jan.kowalski@email.com', 'hasło123', 'Jan Kowalski').then(async user => {
+        await database.createUser('jan.kowalski@email.com', 'hasło123', 'Jan Kowalski', 1, Date.now(), Date.now(), '127.0.0.1').then(async user => {
             await database.createTicket(user.id, 'Zgłoszenie 1', 'Opis zgłoszenia').catch(error => console.error(error));
             await database.createTicket(user.id, 'Zgłoszenie 2', 'Opis zgłoszenia').then(ticket => {
                 ticket.status = database.TICKET_STATUS.IN_PROGRESS;
