@@ -21,7 +21,7 @@ const routes = [
         }
     },
     {
-        path: "/ticket",
+        path: "/panel/:id",
         name: "Ticket",
         component: () => import("./views/pages/Ticket.vue"),
         meta: {

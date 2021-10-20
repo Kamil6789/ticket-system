@@ -19,7 +19,7 @@
                         <td class="col-md-5">{{ ticket.title }}</td>
                         <td class="col-md-1">{{ getTicketStatus(ticket.status) }}</td>
                         <td class="col-md-2">
-                            <a :href="'/ticket?id=' + ticket.id">Sprawdź zgłoszenie</a>
+                            <a :href="'/panel/' + ticket.id">Sprawdź zgłoszenie</a>
                         </td>
                     </tr>
                 </tbody>
