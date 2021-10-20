@@ -7,18 +7,20 @@
                     <tr>
                         <th>Zgłoszone przez</th>
                         <th>Przydzielone do</th>
-                        <th>Status</th>
                         <th>Tytuł</th>
-                        <th>Opis</th>
+                        <th>Status</th>
+                        <th>Akcja</th>
                     </tr>
                 </thead>
                 <tbody class="align-middle">
                     <tr v-for="ticket in tickets" :key="ticket.id">
                         <td class="col-md-2">{{ getUserById(ticket.userId).username }}</td>
                         <td class="col-md-2">{{ getUserById(ticket.technicianId).username }}</td>
+                        <td class="col-md-5">{{ ticket.title }}</td>
                         <td class="col-md-1">{{ getTicketStatus(ticket.status) }}</td>
-                        <td class="col-md-3">{{ ticket.title }}</td>
-                        <td class="col-md-4">{{ ticket.description }}</td>
+                        <td class="col-md-2">
+                            <a :href="'/ticket?id=' + ticket.id">Sprawdź zgłoszenie</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
