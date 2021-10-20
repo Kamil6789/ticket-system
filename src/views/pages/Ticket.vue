@@ -8,7 +8,7 @@
             <p>{{ ticket.description }}</p>
             <h4 class="text-center m-5">Komentarze</h4>
             <div class="comments">
-                <ticket-comment v-for="comment in comments" :key="comment.id" :authorId="comment.authorId" :comment="comment"></ticket-comment>
+                <ticket-comment v-for="comment in comments" :key="comment.id" :comment="comment"></ticket-comment>
             </div>
         </div>
         <div v-else>

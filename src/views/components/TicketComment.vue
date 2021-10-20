@@ -10,7 +10,6 @@
 export default {
     name: 'TicketComment',
     props: {
-        authorId: Number,
         comment: Object
     },
     data() {
@@ -20,7 +19,7 @@ export default {
         }
     },
     created: async function() {
-        await fetch(`/api/users?id=${this.authorId}`).then(res => res.json()).then(data => this.author = data);
+        await fetch(`/api/users?id=${this.comment.authorId}`).then(res => res.json()).then(data => this.author = data);
         this.loading = false;
     },
 }
