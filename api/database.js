@@ -5,7 +5,8 @@ const crypto = require('crypto');
 const ERROR = {
     USER_ALREADY_EXISTS: 'User already exists!',
     USER_DOES_NOT_EXIST: 'User does not exist!',
-    TICKET_DOES_NOT_EXIST: 'User does not exist!'
+    TICKET_DOES_NOT_EXIST: 'Ticket does not exist!',
+    COMMENT_DOES_NOT_EXIST: 'Comment does not exist!'
 };
 
 async function initializeDatabase() {
@@ -19,6 +20,14 @@ async function initializeDatabase() {
                 status INTEGER DEFAULT 0,
                 title VARCHAR(255) DEFAULT '',
                 description TEXT DEFAULT ''
+            );`);
+            database.run(`
+            CREATE TABLE IF NOT EXISTS comments (
+                id INTEGER NOT NULL PRIMARY KEY,
+                ticketId INTEGER NOT NULL,
+                authorId INTEGER NOT NULL,
+                content TEXT DEFAULT '',
+                date TIMESTAMP NOT NULL
             );`);
             database.run(`
             CREATE TABLE IF NOT EXISTS users (
@@ -47,7 +56,7 @@ class User {
     type;
     created;
     lastLogin;
-    address
+    address;
 
     constructor(id, email, password, username, type = ACCOUNT_TYPE.USER, created, lastLogin, address) {
         this.id = id;
@@ -141,6 +150,7 @@ async function getAllUsers() {
             if (error) reject(error);
             if (!row['COUNT(id)']) resolve(null);
             count = row['COUNT(id)'];
+            if (count == 0) resolve(users);
 
             database.each(`SELECT * FROM users`, (error, row) => {
                 if (error) reject(error);
@@ -214,7 +224,7 @@ async function generateNextTicketId() {
     });
 }
 
-async function createTicket(userId, title, description) {
+async function createTicket(user, title, description) {
     return new Promise((resolve, reject) => {
         generateNextTicketId().then(id => {
             getNextTechnician().then(technician => {
@@ -223,9 +233,9 @@ async function createTicket(userId, title, description) {
                     id, userId, technicianId, title, description
                 ) VALUES (
                     ?, ?, ?, ?, ?
-                );`, [id, userId, technician.id, title, description], (error) => {
+                );`, [id, user.id, technician.id, title, description], (error) => {
                     if (error) reject(error);
-                    resolve(new Ticket(id, userId, technician.id, TICKET_STATUS.NEW, title, description));
+                    resolve(new Ticket(id, user.id, technician.id, TICKET_STATUS.NEW, title, description));
                 });
             }).catch(error => reject(error));
         }).catch(error => reject(error));
@@ -255,6 +265,7 @@ async function getAllTickets() {
             if (error) reject(error);
             if (!row['COUNT(id)']) resolve(null);
             count = row['COUNT(id)'];
+            if (count == 0) resolve(tickets);
 
             database.each(`SELECT * FROM tickets`, (error, row) => {
                 if (error) reject(error);
@@ -280,6 +291,109 @@ async function getTicketById(id) {
 }
 //#endregion
 
+//#region Komentarze
+class Comment {
+    id;
+    ticketId;
+    authorId;
+    content;
+    date;
+
+    constructor(id, ticketId, authorId, content, date) {
+        this.id = id;
+        this.ticketId = ticketId;
+        this.authorId = authorId;
+        this.content = content;
+        this.date = date;
+    }
+}
+
+async function generateNextCommentId() {
+    return new Promise((resolve, reject) => {
+        database.get(`SELECT MAX(id) FROM comments`, (error, row) => {
+            if (error) reject(error);
+            if (!row['MAX(id)']) resolve(1);
+            resolve(row['MAX(id)'] + 1);
+        });
+    });
+}
+
+async function postComment(ticket, author, content) {
+    let timestamp = Date.now();
+
+    return new Promise((resolve, reject) => {
+        generateNextCommentId().then(id => {
+            database.run(`
+            INSERT INTO comments (
+                id, ticketId, authorId, content, date
+            ) VALUES (
+                ?, ?, ?, ?, ?
+            );`, [id, ticket.id, author.id, content, timestamp], (error) => {
+                if (error) reject(error);
+                resolve(new Comment(id, ticket.id, author.id, content, timestamp));
+            });
+        }).catch(error => reject(error));
+    });
+}
+
+async function getAllComments() {
+    return new Promise((resolve, reject) => {
+        let comments = [];
+        let count = 0;
+        let index = 0;
+
+        database.get(`SELECT COUNT(id) FROM comments`, (error, row) => {
+            if (error) reject(error);
+            if (!row['COUNT(id)']) resolve(null);
+            count = row['COUNT(id)'];
+            if (count == 0) resolve(comments);
+
+            database.each(`SELECT * FROM comments`, (error, row) => {
+                if (error) reject(error);
+                comments.push(new Comment(row.id, row.ticketId, row.authorId, row.content, row.date));
+                index += 1;
+                if (index == count) resolve(comments);
+            });
+        });
+    });
+}
+
+async function getCommentById(id) {
+    return new Promise((resolve, reject) => {
+        database.get(`SELECT * FROM comments WHERE id = ?`, [id], (error, row) => {
+            if (error) reject(error);
+            if (!row) {
+                reject(new Error(ERROR.COMMENT_DOES_NOT_EXIST));
+            } else {
+                resolve(row);
+            }
+        });
+    });
+}
+
+async function getCommentsByTicketId(ticketId) {
+    return new Promise((resolve, reject) => {
+        let comments = [];
+        let count = 0;
+        let index = 0;
+
+        database.get(`SELECT COUNT(id) FROM comments WHERE ticketId = ?`, [ticketId], (error, row) => {
+            if (error) reject(error);
+            if (!row['COUNT(id)']) resolve(null);
+            count = row['COUNT(id)'];
+            if (count == 0) resolve(comments);
+
+            database.each(`SELECT * FROM comments WHERE ticketId = ?`, [ticketId], (error, row) => {
+                if (error) reject(error);
+                comments.push(new Comment(row.id, row.ticketId, row.authorId, row.content, row.date));
+                index += 1;
+                if (index == count) resolve(comments);
+            });
+        });
+    });
+}
+//#endregion
+
 module.exports = {
     initializeDatabase,
     User,
@@ -295,5 +409,11 @@ module.exports = {
     createTicket,
     updateTicket,
     getAllTickets,
-    getTicketById
+    getTicketById,
+    Comment,
+    generateNextCommentId,
+    postComment,
+    getAllComments,
+    getCommentById,
+    getCommentsByTicketId
 }

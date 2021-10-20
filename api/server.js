@@ -36,6 +36,16 @@ app.get('/api/tickets', checkAuth, (req, res) => {
     }
 });
 
+app.get('/api/comments', checkAuth, (req, res) => {
+    if (req.query.id) {
+        database.getCommentById(req.query.id).then(comment => res.send(comment)).catch(error => console.error(error));
+    } else if (req.query.ticketId) {
+        database.getCommentsByTicketId(req.query.ticketId).then(comments => res.send(comments)).catch(error => console.error(error));
+    } else {
+        database.getAllComments().then(comments => res.send(comments)).catch(error => console.error(error));
+    }
+});
+
 app.get('/api/users', checkAuth, (req, res) => {
     if (!req.query.id) {
         database.getAllUsers().then(users => res.send(users)).catch(error => console.error(error));
@@ -56,14 +66,16 @@ app.listen(process.env.SERVER_PORT || 3000, () => {
         }).catch(error => console.error(error));
 
         await database.createUser('jan.kowalski@email.com', 'hasło123', 'Jan Kowalski', 1, Date.now(), Date.now(), '127.0.0.1').then(async user => {
-            await database.createTicket(user.id, 'Zgłoszenie 1', 'Opis zgłoszenia').catch(error => console.error(error));
-            await database.createTicket(user.id, 'Zgłoszenie 2', 'Opis zgłoszenia').then(ticket => {
+            await database.createTicket(user, 'Zgłoszenie 1', 'Opis zgłoszenia').catch(error => console.error(error));
+            await database.createTicket(user, 'Zgłoszenie 2', 'Opis zgłoszenia').then(ticket => {
                 ticket.status = database.TICKET_STATUS.IN_PROGRESS;
                 database.updateTicket(ticket).catch(error => console.error(error));
             }).catch(error => console.error(error));
-            await database.createTicket(user.id, 'Zgłoszenie 3', 'Opis zgłoszenia').then(ticket => {
+            await database.createTicket(user, 'Zgłoszenie 3', 'Opis zgłoszenia').then(async ticket => {
                 ticket.status = database.TICKET_STATUS.COMPLETED;
-                database.updateTicket(ticket).catch(error => console.error(error));
+                await database.updateTicket(ticket).catch(error => console.error(error));
+                await database.postComment(ticket, user, 'Komentarz');
+                await database.postComment(ticket, user, 'Kolejny komentarz');
             }).catch(error => console.error(error));
         }).catch(error => console.error(error));
     }).catch(error => console.log('Database failed to initialize!'));
