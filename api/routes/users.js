@@ -1,10 +1,13 @@
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const crypto = require('crypto');
 const {verify} = require('hcaptcha');
 
 const database = require('../database');
-const {checkAuth} = require('../utils');
+const {checkAuth, sendMail} = require('../utils');
+
+const recovery = {};
 
 module.exports = function(app) {
 
@@ -55,6 +58,37 @@ module.exports = function(app) {
                 res.json({success: true});
             });
         })(req, res, next);
+    });
+
+    app.post('/api/user/recover', async (req, res, next) => {
+        if(!req.body.email || !req.body.captcha) return res.json({success: false, error: 'INCORRECT_DATA'});
+        try {
+            const captcha = await verify(process.env.captcha, req.body.captcha);
+            if(!captcha.success) return res.json({success: false, error: 'EMPTY_CAPTCHA'});
+            let user = await database.getUserByEmail(req.body.email);
+            const token = crypto.randomBytes(42).toString('hex');
+            recovery[token] = req.body.email;
+            const mail = sendMail(req.body.email, "Odzyskiwanie konta", user.username, `Aby odzyskać swoje konto i wygenerować nowe hasło, wejdź <a href='${process.env.base}?token=${token}'>TUTAJ</a>.`)
+            mail ? res.json({success: true}) : res.json({success: false, error: 'EMAIL_ERROR'})
+        } catch(err) {
+            if(err.message == 'User does not exist!') return res.json({success: false, error: 'USER_NOT_EXISTS'});
+            res.json({success: false, error: 'UNKNOWN_ERROR'});
+        } 
+    });
+
+    app.post('/api/user/newpassword', async (req, res, next) => {
+        if(!req.body.password || req.body.password.length > 100 || !req.body.token) return res.json({success: false, error: 'INCORRECT_DATA'});
+        try {
+            if(!recovery[req.body.token]) return res.json({success: false, error: 'UNKNOWN_ERROR'});
+            let user = await database.getUserByEmail(recovery[req.body.token]);
+            user.password = database.hashPassword(req.body.password);
+            database.updateUser(user);
+            delete recovery[req.body.token];
+            return res.json({success: true});
+        } catch(err) {
+            if(err.message == 'User does not exist!') return res.json({success: false, error: 'USER_NOT_EXISTS'});
+            res.json({success: false, error: 'UNKNOWN_ERROR'});
+        } 
     });
 
     app.get('/api/user/info', checkAuth, async (req, res, next) => {
