@@ -26,20 +26,12 @@
         <div v-else>
             <h1 class="text-center m-5">Ładowanie</h1>
         </div>
-        <particles-bg class="z-index-1" type="thick" :canvas="{backgroundColor:'#888'}" :bg="true" />
     </div>
 </template>
 
 <script>
-const utils = require('../../../api/utils');
-
-import {ParticlesBg} from "particles-bg-vue";
-
 export default {
     name: "Panel",
-    components: {
-        ParticlesBg
-    },
     data() {
         return {
             loading: true,
@@ -57,7 +49,12 @@ export default {
             return this.users.find(user => user.id == id);
         },
         getTicketStatus(status) {
-            return utils.getTicketStatus(status);
+            switch (status) {
+                case 0: return 'nowe';
+                case 1: return 'w trakcie przeglądu';
+                case 2: return 'rozpatrzone';
+                default: return '';
+            }
         }
     }
 }
