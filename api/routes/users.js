@@ -91,6 +91,30 @@ module.exports = function(app) {
         } 
     });
 
+    app.post('/api/user/update', checkAuth, async (req, res, next) => {
+        if(req.query.type == 'email') {
+            if(!req.body.email || req.body.email.length > 100) return res.json({success: false, error: 'INCORRECT_DATA'});
+            try {
+                let user = req.user;
+                user.email = req.body.email;
+                database.updateUser(user);
+                return res.json({success: true});
+            } catch(err) {
+                res.json({success: false, error: 'UNKNOWN_ERROR'});
+            }
+        } else if(req.query.type == 'password') {
+            if(!req.body.password || req.body.password.length > 50) return res.json({success: false, error: 'INCORRECT_DATA'});
+            try {
+                let user = req.user;
+                user.password = database.hashPassword(req.body.password);
+                database.updateUser(user);
+                return res.json({success: true});
+            } catch(err) {
+                res.json({success: false, error: 'UNKNOWN_ERROR'});
+            }
+        }
+    });
+
     app.get('/api/user/info', checkAuth, async (req, res, next) => {
         res.json({success: true, user: req.user});
     });
