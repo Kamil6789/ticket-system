@@ -103,10 +103,13 @@ module.exports = function(app) {
                 res.json({success: false, error: 'UNKNOWN_ERROR'});
             }
         } else if(req.query.type == 'password') {
-            if(!req.body.password || req.body.password.length > 50) return res.json({success: false, error: 'INCORRECT_DATA'});
+            if(!req.body.old_password || !req.body.password || req.body.password.length > 100) return res.json({success: false, error: 'INCORRECT_DATA'});
             try {
                 let user = req.user;
-                user.password = database.hashPassword(req.body.password);
+                const oldpass = database.hashPassword(req.body.old_password);
+                const newpass = database.hashPassword(req.body.password);
+                if(oldpass !== user.password) return res.json({success: false, error: 'WRONG_PASSWORD'});
+                user.password = newpass;
                 database.updateUser(user);
                 return res.json({success: true});
             } catch(err) {
