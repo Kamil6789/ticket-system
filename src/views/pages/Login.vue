@@ -241,6 +241,14 @@ export default {
                     message: "Nie rozwiązano captcha.",
                     type: "danger"
                 },
+                USERNAME_TOO_SHORT: {
+                    message: "Nazwa musi się składać z co najmniej 8 znaków.",
+                    type: "danger"
+                },
+                PASSWORD_TOO_SHORT: {
+                    message: "Hasło musi się składać z co najmniej 8 znaków.",
+                    type: "danger"
+                },
                 REGISTER_SUCCESS: {
                     message: "Zarejestrowano pomyślnie. Teraz możesz się zalogować.",
                     type: "success"

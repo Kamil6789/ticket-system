@@ -39,6 +39,8 @@ module.exports = function(app) {
 
     app.post('/api/user/register', async (req, res, next) => {
         if(!req.body.username || req.body.username.length > 50 || !req.body.email || req.body.email.length > 100 || !req.body.password || req.body.password > 100 || !req.body.captcha) return res.json({success: false, error: 'INCORRECT_DATA'});
+        if(req.body.username.length <= 8) return res.json({success: false, error: 'USERNAME_TOO_SHORT'});
+        if(req.body.password.length <= 8) return res.json({success: false, error: 'PASSWORD_TOO_SHORT'});
         try {
             const captcha = await verify(process.env.captcha, req.body.captcha);
             if(!captcha.success) return res.json({success: false, error: 'EMPTY_CAPTCHA'});
