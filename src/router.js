@@ -21,6 +21,14 @@ const routes = [
         }
     },
     {
+        path: "/panel/ustawienia",
+        name: "Ticket",
+        component: () => import("./views/pages/Settings.vue"),
+        meta: {
+            title: "Ustawienia"
+        }
+    },
+    {
         path: "/panel/:id",
         name: "Ticket",
         component: () => import("./views/pages/Ticket.vue"),
