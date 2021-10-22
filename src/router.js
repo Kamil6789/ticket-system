@@ -9,7 +9,7 @@ const routes = [
         name: "Login",
         component: () => import("./views/pages/Login.vue"),
         meta: {
-            title: "Login"
+            title: "Logowanie"
         }
     },
     {
@@ -17,7 +17,7 @@ const routes = [
         name: "Panel",
         component: () => import("./views/pages/Panel.vue"),
         meta: {
-            title: "Panel zgłoszeń"
+            title: "Zgłoszenia"
         }
     },
     {
@@ -25,7 +25,7 @@ const routes = [
         name: "Ticket",
         component: () => import("./views/pages/Ticket.vue"),
         meta: {
-            title: "Zgłoszenie"
+            title: "Zgłoszenie #{ID}"
         }
     },
     {

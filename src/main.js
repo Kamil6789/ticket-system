@@ -16,6 +16,12 @@ Vue.config.ignoredElements = [
     "h-captcha"
 ];
 
+router.afterEach((to) => {
+    Vue.nextTick(() => {
+        document.title = `${to.meta.title} | System zgłoszeń`.replace("{ID}", to.params.id)
+    });
+});
+
 new Vue({
     router,
     render: h => h(App)
