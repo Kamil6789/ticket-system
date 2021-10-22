@@ -25,15 +25,18 @@
                 </tbody>
             </table>
         </div>
-        <div v-else>
-            <h1 class="text-center m-5">Ładowanie</h1>
-        </div>
+        <Loader v-else class="loader" color="#000" :width="400" :height="5" :sizeUnit="px" />
     </div>
 </template>
 
 <script>
+import {BarLoader} from "@saeris/vue-spinners"
+
 export default {
     name: "Panel",
+    components: {
+        Loader: BarLoader
+    },
     data() {
         return {
             loading: true,
