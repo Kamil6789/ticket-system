@@ -39,6 +39,8 @@ module.exports = function(app) {
 
     app.post('/api/user/register', async (req, res, next) => {
         if(!req.body.username || req.body.username.length > 50 || !req.body.email || req.body.email.length > 100 || !req.body.password || req.body.password > 100 || !req.body.captcha) return res.json({success: false, error: 'INCORRECT_DATA'});
+        if(req.body.username.length <= 8) return res.json({success: false, error: 'USERNAME_TOO_SHORT'});
+        if(req.body.password.length <= 8) return res.json({success: false, error: 'PASSWORD_TOO_SHORT'});
         try {
             const captcha = await verify(process.env.captcha, req.body.captcha);
             if(!captcha.success) return res.json({success: false, error: 'EMPTY_CAPTCHA'});
@@ -103,10 +105,13 @@ module.exports = function(app) {
                 res.json({success: false, error: 'UNKNOWN_ERROR'});
             }
         } else if(req.query.type == 'password') {
-            if(!req.body.password || req.body.password.length > 50) return res.json({success: false, error: 'INCORRECT_DATA'});
+            if(!req.body.old_password || !req.body.password || req.body.password.length > 100) return res.json({success: false, error: 'INCORRECT_DATA'});
             try {
                 let user = req.user;
-                user.password = database.hashPassword(req.body.password);
+                const oldpass = database.hashPassword(req.body.old_password);
+                const newpass = database.hashPassword(req.body.password);
+                if(oldpass !== user.password) return res.json({success: false, error: 'WRONG_PASSWORD'});
+                user.password = newpass;
                 database.updateUser(user);
                 return res.json({success: true});
             } catch(err) {

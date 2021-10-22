@@ -18,7 +18,7 @@
                                 </div>
                                 <div class="form-group m-2">
                                     <label for="password">Hasło</label>
-                                    <input type="password" name="password" v-model="login.password" class="form-control text-center" placeholder="*********" autocomplete="current-password" required>
+                                    <input type="password" name="password" v-model="login.password" minlength="8" class="form-control text-center" placeholder="*********" autocomplete="current-password" required>
                                 </div>
                                 <button v-if="loading" type="submit" class="btn btn-primary m-2 d-block float-end" disabled><Loader v-if="loading" class="d-inline-block" color="white" :size="10" sizeUnit="px" /></button>
                                 <button v-else type="submit" class="btn btn-primary m-2 d-block float-end">Zaloguj</button>
@@ -43,11 +43,11 @@
                                 </div>
                                 <div class="form-group m-2">
                                     <label for="password">Hasło</label>
-                                    <input type="password" name="password" v-model="register.password" class="form-control text-center" placeholder="********" autocomplete="new-password" required>
+                                    <input type="password" name="password" v-model="register.password" minlength="8" class="form-control text-center" placeholder="********" autocomplete="new-password" required>
                                 </div>
                                 <div class="form-group m-2">
                                     <label for="password">Powtórz hasło</label>
-                                    <input type="password" name="repeat_password" v-model="register.repeat_password" class="form-control text-center" placeholder="********" autocomplete="new-password" required>
+                                    <input type="password" name="repeat_password" v-model="register.repeat_password" minlength="8" class="form-control text-center" placeholder="********" autocomplete="new-password" required>
                                 </div>
                                 <div class="form-group m-3">
                                     <h-captcha id="captcha_register" site-key="f9d25138-59f7-49e8-8dd0-909c605ee6f3" @verified="onCaptchaVerifiedRegister"></h-captcha>
@@ -79,11 +79,11 @@
                         <form @submit.prevent="submit_newpassword">
                             <div class="form-group m-2">
                                 <label for="password">Nowe hasło</label>
-                                <input type="password" name="password" v-model="newpassword.password" class="form-control text-center" placeholder="*********" autocomplete="new-password" required>
+                                <input type="password" name="password" v-model="newpassword.password" minlength="8" class="form-control text-center" placeholder="*********" autocomplete="new-password" required>
                             </div>
                             <div class="form-group m-2">
                                 <label for="password">Powtórz nowe hasło</label>
-                                <input type="password" name="password" v-model="newpassword.repeat_password" class="form-control text-center" placeholder="*********" autocomplete="new-password" required>
+                                <input type="password" name="password" v-model="newpassword.repeat_password" minlength="8" class="form-control text-center" placeholder="*********" autocomplete="new-password" required>
                             </div>
                             <button v-if="loading" type="submit" class="btn btn-primary m-2 d-block float-end" disabled><Loader v-if="loading" class="d-inline-block" color="white" :size="10" sizeUnit="px" /></button>
                             <button v-else type="submit" class="btn btn-primary m-2 d-block float-end">Zmień hasło</button>
@@ -239,6 +239,14 @@ export default {
                 },
                 EMPTY_CAPTCHA: {
                     message: "Nie rozwiązano captcha.",
+                    type: "danger"
+                },
+                USERNAME_TOO_SHORT: {
+                    message: "Nazwa musi się składać z co najmniej 8 znaków.",
+                    type: "danger"
+                },
+                PASSWORD_TOO_SHORT: {
+                    message: "Hasło musi się składać z co najmniej 8 znaków.",
                     type: "danger"
                 },
                 REGISTER_SUCCESS: {
