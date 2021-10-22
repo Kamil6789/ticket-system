@@ -115,6 +115,12 @@ module.exports = function(app) {
         }
     });
 
+    app.get('/api/user/logout', checkAuth, async (req, res, next) => {
+        req.session = null;
+        req.logout();
+        res.redirect('/');
+    });
+
     app.get('/api/user/info', checkAuth, async (req, res, next) => {
         res.json({success: true, user: req.user});
     });
