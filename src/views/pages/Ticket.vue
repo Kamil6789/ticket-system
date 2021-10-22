@@ -11,19 +11,19 @@
                 <ticket-comment v-for="comment in comments" :key="comment.id" :comment="comment"></ticket-comment>
             </div>
         </div>
-        <div v-else>
-            <h1 class="text-center m-5">Ładowanie</h1>
-        </div>
+        <Loader v-else class="loader" color="#000" :width="400" :height="5" :sizeUnit="px" />
     </div>
 </template>
 
 <script>
 import TicketComment from '../components/TicketComment.vue'
+import {BarLoader} from "@saeris/vue-spinners"
 
 export default {
     name: "Ticket",
     components: {
-        TicketComment
+        TicketComment,
+        Loader: BarLoader
     },
     data() {
         return {
