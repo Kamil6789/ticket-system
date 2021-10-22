@@ -30,19 +30,45 @@ passport.deserializeUser(function(user, done) {
 
 app.get('/api/tickets', checkAuth, (req, res) => {
     if (!req.query.id) {
-        database.getAllTickets().then(tickets => res.send(tickets)).catch(error => console.error(error));
+        database.getAllTickets().then(tickets => {
+            tickets = tickets.filter(ticket => ticket.userId == req.user.id || ticket.technicianId == req.user.id);
+            res.send(tickets);
+        }).catch(error => console.error(error));
     } else {
-        database.getTicketById(req.query.id).then(ticket => res.send(ticket)).catch(error => console.error(error));
+        database.getTicketById(req.query.id).then(ticket => {
+            if (ticket.userId == req.user.id || ticket.technicianId == req.user.id) res.send(ticket);
+            else res.status(401).send();
+        }).catch(error => console.error(error));
     }
 });
 
 app.get('/api/comments', checkAuth, (req, res) => {
     if (req.query.id) {
-        database.getCommentById(req.query.id).then(comment => res.send(comment)).catch(error => console.error(error));
+        database.getCommentById(req.query.id).then(comment => {
+            if (comment.authorId == req.user.id) res.send(comment);
+            else res.status(401).send();
+        }).catch(error => console.error(error));
     } else if (req.query.ticketId) {
-        database.getCommentsByTicketId(req.query.ticketId).then(comments => res.send(comments)).catch(error => console.error(error));
+        database.getCommentsByTicketId(req.query.ticketId).then(comments => {
+            database.getTicketById(req.query.ticketId).then(ticket => {
+                if (ticket.userId == req.user.id || ticket.technicianId == req.user.id) res.send(comments);
+                else res.status(401).send();
+            }).catch(error => console.console.error(error));
+        }).catch(error => console.error(error));
     } else {
-        database.getAllComments().then(comments => res.send(comments)).catch(error => console.error(error));
+        database.getAllTickets().then(async tickets => {
+            tickets = tickets.filter(ticket => ticket.userId == req.user.id || ticket.technicianId == req.user.id);
+
+            let comments = [];
+
+            for (let i = 0; i < tickets.length; i++) {
+                await database.getCommentsByTicketId(tickets[i].id).then(ticketComments => {
+                    if (ticketComments) comments = comments.concat(ticketComments);
+                }).catch(error => console.error(error));
+
+                if (i == tickets.length - 1) res.send(comments);
+            }
+        }).catch(error => console.error(error));
     }
 });
 
