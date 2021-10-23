@@ -8,6 +8,14 @@
                 <h4 class="text-center m-5">Opis zgłoszenia</h4>
                 <p>{{ ticket.description }}</p>
                 <h4 class="text-center m-5">Komentarze</h4>
+                <div class="post-comment">
+                    <form @submit.prevent="submit_comment">
+                        <div class="form-group m-2">
+                            <textarea name="content" v-model="comment.content" placeholder="Treść komentarza" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary m-2 d-block">Wyślij</button>
+                    </form>
+                </div>
                 <div class="comments">
                     <ticket-comment v-for="comment in comments" :key="comment.id" :comment="comment"></ticket-comment>
                 </div>
@@ -38,7 +46,10 @@ export default {
             ticket: null,
             comments: [],
             user: null,
-            technician: null
+            technician: null,
+            comment: {
+                content: null
+            }
         }
     },
     created: async function() {
@@ -62,5 +73,22 @@ export default {
         await fetch(`/api/users?id=${this.ticket.technicianId}`).then(res => res.json()).then(data => this.technician = data);
         this.loading = false;
     },
+    methods: {
+        submit_comment: async function() {
+            if (this.comment.content) {
+                const ticketId = this.ticket.id;
+                const content = this.comment.content;
+
+                const res = await fetch("/api/tickets/comment", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ ticketId, content })
+                });
+                
+                const body = await res.json();
+                if (body.success) this.$router.go();
+            }
+        }
+    }
 }
 </script>

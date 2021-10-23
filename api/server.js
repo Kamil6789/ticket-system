@@ -16,6 +16,7 @@ app.use(cors());
 require('dotenv').config();
 
 require('./routes/users')(app);
+require('./routes/tickets')(app);
 
 const database = require('./database');
 const {checkAuth} = require('./utils');
