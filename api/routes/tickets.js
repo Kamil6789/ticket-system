@@ -14,7 +14,7 @@ module.exports = function (app) {
     });
 
     app.post('/api/tickets/send', checkAuth, async (req, res, next) => {
-        if (req.user && req.body.title && req.body.description) {
+        if (req.user && req.body.title.length <= 255 && req.body.description) {
             await database.createTicket(req.user, req.body.title, req.body.description).catch(error => console.error(error));
             return res.json({ success: true });
         }
