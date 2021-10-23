@@ -1,6 +1,17 @@
 <template>
     <div class="container">
         <div class="content" v-if="!loading">
+            <h1 class="text-center m-5">Wyślij zgłoszenie</h1>
+            <div class="send-ticket">
+                <form @submit.prevent="submit_ticket">
+                    <div class="form-group m-2">
+                        <input type="text" name="title" v-model="ticket.title" placeholder="Tytuł" maxlength="255" required>
+                        <br>
+                        <textarea name="description" v-model="ticket.description" placeholder="Opis" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary m-2 d-block">Wyślij</button>
+                </form>
+            </div>
             <h1 class="text-center m-5">Przypisane zgłoszenia</h1>
             <table class="table text-center">
                 <thead>
@@ -41,7 +52,11 @@ export default {
         return {
             loading: true,
             tickets: [],
-            users: []
+            users: [],
+            ticket: {
+                title: null,
+                description: null
+            }
         }
     },
     created: async function() {
@@ -59,6 +74,21 @@ export default {
                 case 1: return 'w trakcie przeglądu';
                 case 2: return 'rozpatrzone';
                 default: return '';
+            }
+        },
+        submit_ticket: async function() {
+            if (this.ticket.title.length <= 255 && this.ticket.description) {
+                const title = this.ticket.title;
+                const description = this.ticket.description;
+
+                const res = await fetch("/api/tickets/send", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ title, description })
+                });
+                
+                const body = await res.json();
+                if (body.success) this.$router.go();
             }
         }
     }

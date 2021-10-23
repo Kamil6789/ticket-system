@@ -12,4 +12,11 @@ module.exports = function (app) {
             }).catch(error => console.error(error));
         }
     });
+
+    app.post('/api/tickets/send', checkAuth, async (req, res, next) => {
+        if (req.user && req.body.title && req.body.description) {
+            await database.createTicket(req.user, req.body.title, req.body.description).catch(error => console.error(error));
+            return res.json({ success: true });
+        }
+    });
 }
