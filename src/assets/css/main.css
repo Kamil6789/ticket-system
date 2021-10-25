@@ -1,3 +1,7 @@
+:root {
+    --primary-color: rgb(20, 112, 187);
+}
+
 * {
     margin: 0;
 }
@@ -15,10 +19,6 @@ h1.err, h2.err {
     text-shadow: 2px 2px 5px black;
 }
 
-a {
-    text-decoration: none !important;
-}
-
 .loader {
     position: absolute;
     text-align: center;
@@ -27,14 +27,48 @@ a {
     transform: translate(-50%, -50%);
 }
 
+div.content {
+    margin-top: 90px;
+}
+
+/* Primary color */
+
+.bg, .btn-primary, .badge-primary {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover {
+    filter: brightness(0.95) !important;
+}
+
+.form-control {
+    border-color: var(--primary-color) !important;
+}
+
+a {
+    text-decoration: none !important;
+    color: var(--primary-color) !important;
+}
+
+a:hover {
+    color: var(--primary-color) !important;
+    filter: brightness(0.4);
+}
+
+/* Navbar */
+
+a.navbar-brand, a.navbar-brand:hover, a.nav-link, a.nav-link:hover {
+    color: rgb(255, 255, 255, 0.9) !important;
+    filter: brightness(100%);
+}
+
 a.nav-link {
     color: rgba(255, 255, 255, 0.75) !important;
+    filter: brightness(100%);
 }
 
 a.nav-link:hover {
     color: rgba(255, 255, 255, 0.95) !important;
-}
-
-div.content {
-    margin-top: 80px;
+    filter: brightness(100%);
 }

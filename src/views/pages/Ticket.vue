@@ -37,7 +37,7 @@
                     <ticket-comment v-for="comment in comments" :key="comment.id" :comment="comment"></ticket-comment>
                 </div>
             </div>
-            <Loader v-else class="loader" color="#000" :width="400" :height="5" sizeUnit="px" />
+            <Loader v-else class="loader" color="#1470bb" :width="400" :height="5" sizeUnit="px" />
         </div>
         <Error401 v-else />
     </div>
