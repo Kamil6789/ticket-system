@@ -1,8 +1,8 @@
 <template>
     <div class="container">
         <div class="content" v-if="!loading">
-            <h1 class="text-center m-5">Wyślij zgłoszenie</h1>
-            <div class="send-ticket">
+            <div class="send-ticket" v-if="currentUser.type == 1">
+                <h1 class="text-center m-5">Wyślij zgłoszenie</h1>
                 <form @submit.prevent="submit_ticket">
                     <div class="form-group m-2">
                         <input type="text" name="title" v-model="ticket.title" placeholder="Tytuł" maxlength="255" required>
@@ -50,6 +50,7 @@ export default {
     },
     data() {
         return {
+            currentUser: null,
             loading: true,
             tickets: [],
             users: [],
@@ -60,6 +61,7 @@ export default {
         }
     },
     created: async function() {
+        await fetch('/api/user/info').then(res => res.json()).then(data => this.currentUser = data.user);
         await fetch('/api/tickets').then(res => res.json()).then(data => this.tickets = data);
         await fetch('/api/users').then(res => res.json()).then(data => this.users = data);
         this.loading = false;

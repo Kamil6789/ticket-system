@@ -7,6 +7,22 @@
                 <p>Przydzielone do: {{ technician.username }}</p>
                 <h4 class="text-center m-5">Opis zgłoszenia</h4>
                 <p>{{ ticket.description }}</p>
+                <div class="manage" v-if="currentUser.type == 2">
+                    <h4 class="text-center m-5">Zarządzaj zgłoszeniem</h4>
+                    <form @submit.prevent="submit_update">
+                        <h6>Status zgłoszenia</h6>
+                        <input type="radio" name="status" v-model="update.status" value="0">
+                        <label for="name">nowe</label>
+                        <br>
+                        <input type="radio" name="status" v-model="update.status" value="1">
+                        <label for="name">w trakcie przeglądu</label>
+                        <br>
+                        <input type="radio" name="status" v-model="update.status" value="2">
+                        <label for="name">rozpatrzone</label>
+                        <br><br>
+                        <input type="submit" value="Aktualizuj zgłoszenie">
+                    </form>
+                </div>
                 <h4 class="text-center m-5">Komentarze</h4>
                 <div class="post-comment">
                     <form @submit.prevent="submit_comment">
@@ -41,6 +57,7 @@ export default {
     },
     data() {
         return {
+            currentUser: null,
             authorized: true,
             loading: true,
             ticket: null,
@@ -49,6 +66,9 @@ export default {
             technician: null,
             comment: {
                 content: null
+            },
+            update: {
+                status: null
             }
         }
     },
@@ -68,12 +88,29 @@ export default {
 
         if (!this.authorized) return;
 
+        await fetch('/api/user/info').then(res => res.json()).then(data => this.currentUser = data.user);
         await fetch(`/api/comments?ticketId=${this.$route.params.id}`).then(res => res.json()).then(data => this.comments = data).catch(() => this.comments = []);
         await fetch(`/api/users?id=${this.ticket.userId}`).then(res => res.json()).then(data => this.user = data);
         await fetch(`/api/users?id=${this.ticket.technicianId}`).then(res => res.json()).then(data => this.technician = data);
+        this.update.status = this.ticket.status;
         this.loading = false;
     },
     methods: {
+        submit_update: async function() {
+            if (this.update.status) {
+                const ticketId = this.ticket.id;
+                const status = this.update.status;
+
+                const res = await fetch("/api/tickets/update", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ ticketId, status })
+                });
+                
+                const body = await res.json();
+                if (body.success) this.$router.go();
+            }
+        },
         submit_comment: async function() {
             if (this.comment.content) {
                 const ticketId = this.ticket.id;
