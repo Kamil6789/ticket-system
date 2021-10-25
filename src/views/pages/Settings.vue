@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <Navbar />
         <div v-if="!loading.all" class="content">
             <h1 class="text-center m-5">Ustawienia</h1>
 
@@ -38,11 +39,14 @@
 <script>
 import {BarLoader, PulseLoader} from "@saeris/vue-spinners"
 
+import Navbar from "../components/Navbar.vue"
+
 export default {
     name: "Settings",
     components: {
         Loader: BarLoader,
-        FormLoader: PulseLoader
+        FormLoader: PulseLoader,
+        Navbar
     },
     async created() {
         this.loading.all = true;

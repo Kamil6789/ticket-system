@@ -14,8 +14,7 @@ import "./assets/css/login.css"
 
 import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap/dist/js/bootstrap.js"
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.min.js"
+
 
 import Error500 from "./views/errors/Error500.vue"
 

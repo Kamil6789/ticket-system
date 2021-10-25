@@ -17,3 +17,7 @@ div.header-content {
     width: 100%;
     z-index: 5;
 }
+
+a.nav-link[role=tab], a.nav-link:hover[role=tab] {
+    color: rgba(0, 0, 0, 0.8) !important;
+}
