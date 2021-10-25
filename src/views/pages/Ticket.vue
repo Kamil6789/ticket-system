@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <Navbar />
         <div v-if="authorized">
             <div class="content" v-if="!loading">
                 <h1 class="text-center m-5">{{ ticket.title }}</h1>
@@ -44,7 +45,7 @@
 
 <script>
 import Error401 from '../errors/Error401.vue';
-
+import Navbar from '../components/Navbar.vue'
 import TicketComment from '../components/TicketComment.vue'
 import {BarLoader} from "@saeris/vue-spinners"
 
@@ -52,6 +53,7 @@ export default {
     name: "Ticket",
     components: {
         Error401,
+        Navbar,
         TicketComment,
         Loader: BarLoader
     },

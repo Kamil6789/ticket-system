@@ -11,7 +11,7 @@
                         <router-link to="/panel" class="nav-link"><i class="fas fa-list"></i> Lista zgłoszeń</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/panel/settings" class="nav-link"><i class="fas fa-user-cog"></i> Ustawienia konta</router-link>
+                        <router-link to="/panel/ustawienia" class="nav-link"><i class="fas fa-user-cog"></i> Ustawienia konta</router-link>
                     </li>
                 </ul>
                 <a href="#" @click="logout" class="nav-link logout"><i class="fas fa-sign-out-alt"></i> Wyloguj</a>

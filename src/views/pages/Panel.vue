@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <Navbar />
         <div class="content" v-if="!loading">
             <div class="send-ticket" v-if="currentUser.type == 1">
                 <h1 class="text-center m-5">Wyślij zgłoszenie</h1>
@@ -42,11 +43,13 @@
 
 <script>
 import {BarLoader} from "@saeris/vue-spinners"
+import Navbar from "../components/Navbar.vue"
 
 export default {
     name: "Panel",
     components: {
-        Loader: BarLoader
+        Loader: BarLoader,
+        Navbar
     },
     data() {
         return {
