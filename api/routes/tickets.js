@@ -19,4 +19,16 @@ module.exports = function (app) {
             return res.json({ success: true });
         }
     });
+
+    app.post('/api/tickets/update', checkAuth, async (req, res, next) => {
+        if (req.user.type == 2 && req.body.ticketId && req.body.status) {
+            await database.getTicketById(req.body.ticketId).then(async ticket => {
+                if (ticket.technicianId == req.user.id) {
+                    ticket.status = req.body.status;
+                    await database.updateTicket(ticket).catch(error => console.error(error));
+                    return res.json({ success: true });
+                }
+            }).catch(error => console.error(error));
+        }
+    });
 }
