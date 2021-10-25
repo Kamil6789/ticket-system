@@ -52,6 +52,7 @@
 
         </div>
         <Loader v-else class="loader" color="#1470bb" :width="400" :height="5" sizeUnit="px" />
+        <Footer />
     </div>
     
 </template>
@@ -61,13 +62,15 @@ import {BarLoader, PulseLoader} from "@saeris/vue-spinners"
 import moment from "moment"
 
 import Navbar from "../components/Navbar.vue"
+import Footer from "../components/Footer.vue"
 
 export default {
     name: "Settings",
     components: {
         Loader: BarLoader,
         FormLoader: PulseLoader,
-        Navbar
+        Navbar,
+        Footer
     },
     async created() {
         this.loading.all = true;

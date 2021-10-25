@@ -1,5 +1,5 @@
 :root {
-    --primary-color: rgb(20, 112, 187);
+    --primary-color: #1470bb;
 }
 
 * {
@@ -29,6 +29,12 @@ h1.err, h2.err {
 
 div.content {
     margin-top: 90px;
+    min-height: 88vh;
+    padding-bottom: 10px;
+}
+
+footer > small {
+    font-size: 0.7rem;
 }
 
 /* Primary color */

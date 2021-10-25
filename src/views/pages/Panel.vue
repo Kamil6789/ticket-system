@@ -38,18 +38,22 @@
             </table>
         </div>
         <Loader v-else class="loader" color="#1470bb" :width="400" :height="5" sizeUnit="px" />
+        <Footer />
     </div>
 </template>
 
 <script>
 import {BarLoader} from "@saeris/vue-spinners"
+
 import Navbar from "../components/Navbar.vue"
+import Footer from "../components/Footer.vue"
 
 export default {
     name: "Panel",
     components: {
         Loader: BarLoader,
-        Navbar
+        Navbar,
+        Footer
     },
     data() {
         return {

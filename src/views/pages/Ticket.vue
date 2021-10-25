@@ -38,6 +38,7 @@
                 </div>
             </div>
             <Loader v-else class="loader" color="#1470bb" :width="400" :height="5" sizeUnit="px" />
+            <Footer />
         </div>
         <Error401 v-else />
     </div>
@@ -46,6 +47,7 @@
 <script>
 import Error401 from '../errors/Error401.vue';
 import Navbar from '../components/Navbar.vue'
+import Footer from '../components/Footer.vue'
 import TicketComment from '../components/TicketComment.vue'
 import {BarLoader} from "@saeris/vue-spinners"
 
@@ -54,6 +56,7 @@ export default {
     components: {
         Error401,
         Navbar,
+        Footer,
         TicketComment,
         Loader: BarLoader
     },
