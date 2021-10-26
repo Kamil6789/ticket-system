@@ -33,7 +33,7 @@ app.get('/api/tickets', checkAuth, (req, res) => {
     if (!req.query.id) {
         database.getAllTickets().then(tickets => {
             tickets = tickets.filter(ticket => ticket.userId == req.user.id || ticket.technicianId == req.user.id);
-            res.send(tickets);
+            res.send(tickets.reverse());
         }).catch(error => console.error(error));
     } else {
         database.getTicketById(req.query.id).then(ticket => {
@@ -52,7 +52,7 @@ app.get('/api/comments', checkAuth, (req, res) => {
     } else if (req.query.ticketId) {
         database.getCommentsByTicketId(req.query.ticketId).then(comments => {
             database.getTicketById(req.query.ticketId).then(ticket => {
-                if (ticket.userId == req.user.id || ticket.technicianId == req.user.id) res.send(comments);
+                if (ticket.userId == req.user.id || ticket.technicianId == req.user.id) res.send(comments.reverse());
                 else res.status(401).send();
             }).catch(error => console.console.error(error));
         }).catch(error => console.error(error));
