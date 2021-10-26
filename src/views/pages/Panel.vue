@@ -6,9 +6,9 @@
                 <h1 class="text-center m-5">Wyślij zgłoszenie</h1>
                 <form @submit.prevent="submit_ticket">
                     <div class="form-group m-2">
-                        <input type="text" name="title" v-model="ticket.title" placeholder="Tytuł" maxlength="255" required>
+                        <input class="form-control" type="text" name="title" v-model="ticket.title" placeholder="Tytuł" maxlength="255" required>
                         <br>
-                        <textarea name="description" v-model="ticket.description" placeholder="Opis" required></textarea>
+                        <textarea class="form-control" name="description" v-model="ticket.description" placeholder="Opis" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary m-2 d-block">Wyślij</button>
                 </form>
@@ -31,7 +31,7 @@
                         <td class="col-md-5">{{ ticket.title }}</td>
                         <td class="col-md-1">{{ getTicketStatus(ticket.status) }}</td>
                         <td class="col-md-2">
-                            <a :href="'/panel/' + ticket.id">Sprawdź zgłoszenie</a>
+                            <router-link :to="'/panel/' + ticket.id">Sprawdź zgłoszenie</router-link>
                         </td>
                     </tr>
                 </tbody>

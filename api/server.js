@@ -33,7 +33,7 @@ app.get('/api/tickets', checkAuth, (req, res) => {
     if (!req.query.id) {
         database.getAllTickets().then(tickets => {
             tickets = tickets.filter(ticket => ticket.userId == req.user.id || ticket.technicianId == req.user.id);
-            res.send(tickets.reverse());
+            tickets ? res.send(tickets.reverse()) : res.send(tickets);
         }).catch(error => console.error(error));
     } else {
         database.getTicketById(req.query.id).then(ticket => {
@@ -52,9 +52,9 @@ app.get('/api/comments', checkAuth, (req, res) => {
     } else if (req.query.ticketId) {
         database.getCommentsByTicketId(req.query.ticketId).then(comments => {
             database.getTicketById(req.query.ticketId).then(ticket => {
-                if (ticket.userId == req.user.id || ticket.technicianId == req.user.id) res.send(comments.reverse());
+                if (ticket.userId == req.user.id || ticket.technicianId == req.user.id) comments ? res.send(comments.reverse()) : res.send(comments);
                 else res.status(401).send();
-            }).catch(error => console.console.error(error));
+            }).catch(error => console.error(error));
         }).catch(error => console.error(error));
     } else {
         database.getAllTickets().then(async tickets => {
@@ -107,5 +107,4 @@ app.listen(process.env.SERVER_PORT || 3000, async () => {
     } catch(err) {
         console.log('Test accounts and/or tickets could not be created as they most likely already exist.');
     }
-
 });
