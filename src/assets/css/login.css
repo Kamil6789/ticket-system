@@ -19,5 +19,5 @@ div.header-content {
 }
 
 a.nav-link[role=tab], a.nav-link:hover[role=tab] {
-    color: rgba(0, 0, 0, 0.8) !important;
+    color: #000000cc !important;
 }

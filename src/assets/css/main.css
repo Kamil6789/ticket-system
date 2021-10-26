@@ -65,16 +65,16 @@ a:hover {
 /* Navbar */
 
 a.navbar-brand, a.navbar-brand:hover, a.nav-link, a.nav-link:hover {
-    color: rgb(255, 255, 255, 0.9) !important;
+    color: #ffffffe6 !important;
     filter: brightness(100%);
 }
 
 a.nav-link {
-    color: rgba(255, 255, 255, 0.75) !important;
+    color: #ffffffbf !important;
     filter: brightness(100%);
 }
 
 a.nav-link:hover {
-    color: rgba(255, 255, 255, 0.95) !important;
+    color: #fffffff2 !important;
     filter: brightness(100%);
 }
