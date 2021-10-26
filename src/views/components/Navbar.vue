@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg shadow">
         <div class="container-fluid">
             <router-link to="/panel" class="navbar-brand">System zgłoszeń</router-link>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText">
