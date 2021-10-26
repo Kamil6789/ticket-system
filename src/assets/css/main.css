@@ -2,6 +2,23 @@
     --primary-color: #1470bb;
 }
 
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px #1470bbbd;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color); 
+}
+
+::selection {
+    color: white;
+    background: var(--primary-color); 
+}
+
 * {
     margin: 0;
 }
@@ -11,7 +28,7 @@ html, body {
     overflow-x: hidden;
 }
 
-input, button {
+input, button, textarea {
     box-shadow: none !important;
 }
 
