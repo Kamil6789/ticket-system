@@ -97,7 +97,7 @@ export default {
                 });
                 
                 const body = await res.json();
-                if (body.success) this.$router.go();
+                if (body.success) this.$router.push(`/panel/${body.ticket.id}`);
             }
         }
     }
