@@ -94,11 +94,27 @@ async function getNextTechnician() {
         getAllUsers().then(users => {
             let technicians = [];
 
-            for (const user of users) {
+            users.forEach(user => {
                 if (user.type == ACCOUNT_TYPE.TECHNICIAN) technicians.push(user);
-            }
+            });
 
-            resolve(technicians[0]);
+            getAllTickets().then(tickets => {
+                let ticketsCount = new Map();
+
+                technicians.forEach(technician => {
+                    ticketsCount.set(technician.id, 0);
+                });
+
+                if (tickets) {
+                    tickets.forEach(ticket => {
+                        ticketsCount.set(ticket.technicianId, ticketsCount.get(ticket.technicianId) + 1);
+                    });
+                }
+
+                let sortedTicketsCount = new Map([...ticketsCount.entries()].sort((a, b) => a[1] - b[1]));
+                let nextTechnicianId = sortedTicketsCount.entries().next().value[0];
+                resolve(technicians.find(technician => technician.id == nextTechnicianId));
+            }).catch(error => reject(error));
         }).catch(error => reject(error));
     });
 }
