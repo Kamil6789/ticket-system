@@ -36,7 +36,7 @@
                     </form>
                 </div>
                 <div class="comments">
-                    <ticket-comment v-for="comment in comments" :key="comment.id" :comment="comment"></ticket-comment>
+                    <ticket-comment v-for="comment in comments" :key="comment.id" :comment="comment" :isMine="currentUser.id == comment.authorId"></ticket-comment>
                 </div>
             </div>
             <Loader v-else class="loader" color="#1470bb" :width="400" :height="5" sizeUnit="px" />

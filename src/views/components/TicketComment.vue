@@ -1,8 +1,8 @@
 <template>
-    <div class="comment" v-if="!loading">
+    <div :class="{ comment, 'comment-mine': isMine }" v-if="!loading">
         <h6>{{ author.username }}</h6>
         <p>{{ comment.content }}</p>
-        <p>{{ new Date(comment.date).toLocaleString('pl-PL') }}</p>
+        <div class="comment-date">{{ new Date(comment.date).toLocaleString('pl-PL') }}</div>
     </div>
 </template>
 
@@ -10,6 +10,7 @@
 export default {
     name: 'TicketComment',
     props: {
+        isMine: Boolean,
         comment: Object
     },
     data() {
