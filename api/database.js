@@ -19,7 +19,8 @@ async function initializeDatabase() {
                 technicianId INTEGER NOT NULL,
                 status INTEGER DEFAULT 0,
                 title VARCHAR(255) DEFAULT '',
-                description TEXT DEFAULT ''
+                description TEXT DEFAULT '',
+                date TIMESTAMP NOT NULL
             );`);
             database.run(`
             CREATE TABLE IF NOT EXISTS comments (
@@ -215,14 +216,16 @@ class Ticket {
     status;
     title;
     description;
+    date;
 
-    constructor(id, userId, technicianId, status, title, description) {
+    constructor(id, userId, technicianId, status, title, description, date) {
         this.id = id;
         this.userId = userId;
         this.technicianId = technicianId;
         this.status = status;
         this.title = title;
         this.description = description;
+        this.date = date;
     }
 }
 
@@ -248,12 +251,12 @@ async function createTicket(user, title, description) {
             getNextTechnician().then(technician => {
                 database.run(`
                 INSERT INTO tickets (
-                    id, userId, technicianId, title, description
+                    id, userId, technicianId, title, description, date
                 ) VALUES (
-                    ?, ?, ?, ?, ?
-                );`, [id, user.id, technician.id, title, description], (error) => {
+                    ?, ?, ?, ?, ?, ?
+                );`, [id, user.id, technician.id, title, description, Date.now()], (error) => {
                     if (error) reject(error);
-                    resolve(new Ticket(id, user.id, technician.id, TICKET_STATUS.NEW, title, description));
+                    resolve(new Ticket(id, user.id, technician.id, TICKET_STATUS.NEW, title, description, Date.now()));
                 });
             }).catch(error => reject(error));
         }).catch(error => reject(error));
@@ -264,9 +267,9 @@ async function updateTicket(ticket) {
     return new Promise((resolve, reject) => {
         database.run(`
         UPDATE tickets SET
-            userId = ?, technicianId = ?, status = ?, title = ?, description = ?
+            userId = ?, technicianId = ?, status = ?, title = ?, description = ?, date = ?
         WHERE id = ?;
-        `, [ticket.userId, ticket.technicianId, ticket.status, ticket.title, ticket.description, ticket.id], (error) => {
+        `, [ticket.userId, ticket.technicianId, ticket.status, ticket.title, ticket.description, ticket.date, ticket.id], (error) => {
             if (error) reject(error);
             resolve(ticket);
         });
@@ -287,7 +290,7 @@ async function getAllTickets() {
 
             database.each(`SELECT * FROM tickets`, (error, row) => {
                 if (error) reject(error);
-                tickets.push(new Ticket(row.id, row.userId, row.technicianId, row.status, row.title, row.description));
+                tickets.push(new Ticket(row.id, row.userId, row.technicianId, row.status, row.title, row.description, row.date));
                 index += 1;
                 if (index == count) resolve(tickets);
             });

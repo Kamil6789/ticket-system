@@ -31,8 +31,18 @@ passport.deserializeUser(function(user, done) {
 
 app.get('/api/tickets', checkAuth, (req, res) => {
     if (!req.query.id) {
-        database.getAllTickets().then(tickets => {
+        database.getAllTickets().then(async tickets => {
             tickets = tickets.filter(ticket => ticket.userId == req.user.id || ticket.technicianId == req.user.id);
+            for(const ticket of tickets) {
+                const comments = await database.getCommentsByTicketId(ticket.id);
+                let arr = [];
+                for(const i in comments) {
+                    arr.push(comments[i]);
+                }
+                arr.reverse();
+                ticket.updated = arr[0]?.date || ticket.date;
+            }
+            tickets.sort((a, b) => a.updated - b.updated)
             tickets ? res.send(tickets.reverse()) : res.send(tickets);
         }).catch(error => console.error(error));
     } else {
