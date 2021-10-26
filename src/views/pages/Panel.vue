@@ -4,7 +4,7 @@
         <div class="content" v-if="!loading">
             <div class="send-ticket" v-if="currentUser.type == 1">
                 <h1 class="text-center m-5">Wyślij zgłoszenie</h1>
-                <form @submit.prevent="submit_ticket">
+                <form @submit.prevent="submit_ticket" class="col-7 mx-auto">
                     <div class="form-group m-2">
                         <input class="form-control" type="text" name="title" v-model="ticket.title" placeholder="Tytuł" maxlength="255" required>
                         <br>
@@ -14,28 +14,36 @@
                 </form>
             </div>
             <h1 class="text-center m-5">Przypisane zgłoszenia</h1>
-            <table class="table text-center">
-                <thead>
-                    <tr>
-                        <th>Zgłoszone przez</th>
-                        <th>Przydzielone do</th>
-                        <th>Tytuł</th>
-                        <th>Status</th>
-                        <th>Akcja</th>
-                    </tr>
-                </thead>
-                <tbody class="align-middle">
-                    <tr v-for="ticket in tickets" :key="ticket.id">
-                        <td class="col-md-2">{{ getUserById(ticket.userId).username }}</td>
-                        <td class="col-md-2">{{ getUserById(ticket.technicianId).username }}</td>
-                        <td class="col-md-5">{{ ticket.title }}</td>
-                        <td class="col-md-1">{{ getTicketStatus(ticket.status) }}</td>
-                        <td class="col-md-2">
-                            <router-link :to="'/panel/' + ticket.id">Sprawdź zgłoszenie</router-link>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive-lg">
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th>Zgłoszone przez</th>
+                            <th>Przydzielone do</th>
+                            <th>Tytuł</th>
+                            <th>Status</th>
+                            <th>Aktywność</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        <tr v-for="ticket in tickets" :key="ticket.id">
+                            <td class="col-md-2">{{ getUserById(ticket.userId).username }}</td>
+                            <td class="col-md-2">{{ getUserById(ticket.technicianId).username }}</td>
+                            <td class="col-md-4">{{ ticket.title }}</td>
+                            <td class="col-md-1">
+                                <span v-if="ticket.status == 2" class="badge bg-success">{{ getTicketStatus(ticket.status).toUpperCase() }}</span>
+                                <span v-else-if="ticket.status == 1" class="badge bg-info">{{ getTicketStatus(ticket.status).toUpperCase() }}</span>
+                                <span v-else class="badge bg-danger">{{ getTicketStatus(ticket.status).toUpperCase() }}</span>
+                            </td>
+                            <td class="col-md-1"><span class="badge badge-primary">{{ ms(Date.now() - (ticket.updated || ticket.date)) }} temu</span></td>
+                            <td class="col-md-2">
+                                <router-link :to="'/panel/' + ticket.id">Sprawdź zgłoszenie</router-link>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <Loader v-else class="loader" color="#1470bb" :width="400" :height="5" sizeUnit="px" />
         <Footer />
@@ -44,6 +52,7 @@
 
 <script>
 import {BarLoader} from "@saeris/vue-spinners"
+import ms from "ms"
 
 import Navbar from "../components/Navbar.vue"
 import Footer from "../components/Footer.vue"
@@ -61,6 +70,7 @@ export default {
             loading: true,
             tickets: [],
             users: [],
+            ms,
             ticket: {
                 title: null,
                 description: null
