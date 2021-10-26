@@ -50,6 +50,10 @@ div.content {
     padding-bottom: 10px;
 }
 
+footer {
+    clear: both;
+}
+
 footer > small {
     font-size: 0.7rem;
 }

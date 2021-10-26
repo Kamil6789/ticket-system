@@ -1,0 +1,27 @@
+.comment {
+    clear: both;
+    float: left;
+    width: max-content;
+    max-width: 50%;
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    color: #000;
+    background-color: #EEE;
+    text-align: left;
+}
+
+.comment-mine {
+    float: right;
+    color: #FFF;
+    background-color: var(--primary-color);
+    text-align: right;
+}
+
+.comment > p {
+    text-align: left;
+}
+
+.comment-date {
+    opacity: 0.5;
+}
