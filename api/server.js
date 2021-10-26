@@ -73,11 +73,25 @@ app.get('/api/comments', checkAuth, (req, res) => {
     }
 });
 
-app.get('/api/users', checkAuth, (req, res) => {
+app.get('/api/users', checkAuth, async (req, res) => {
     if (!req.query.id) {
-        database.getAllUsers().then(users => res.send(users)).catch(error => console.error(error));
+        const users = await database.getAllUsers();
+        const toSend = [];
+        for (const user of users) {
+            if (user.id == req.user.id || req.user.type == 2 || user.type == 2) {
+                delete user.password;
+                delete user.address;
+                toSend.push(user);
+            }
+        }
+        res.send(toSend);
     } else {
-        database.getUserById(req.query.id).then(user => res.send(user)).catch(error => console.error(error));
+        const user = await database.getUserById(req.query.id);
+        if (user.id == req.user.id || req.user.type == 2 || user.type == 2) {
+            delete user.password;
+            delete user.address;
+            res.send(user);
+        } else return res.status(401).send();
     }
 });
 
