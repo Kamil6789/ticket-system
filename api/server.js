@@ -4,14 +4,28 @@ const passport = require('passport');
 const cookieSession = require('cookie-session');
 const flash = require('connect-flash');
 const cors = require('cors');
+const history = require('connect-history-api-fallback');
 
 const app = express();
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(express.static('dist'));
 app.use(cookieSession({secret: 'somesecrettokenhere'}));
 app.use(flash());
 app.use(cors());
+
+app.use(history({
+    index: '/index.html',
+    rewrites: [{
+        from: /^\/api\/.*$/,
+        to: function(context) {
+            return context.parsedUrl.path
+        }
+    }]
+}));
+  
+app.use(express.static('dist'));
 
 require('dotenv').config();
 
@@ -103,6 +117,10 @@ app.get('/api/users', checkAuth, async (req, res) => {
             res.send(user);
         } else return res.status(401).send();
     }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile('dist/index.html');
 });
 
 app.listen(process.env.SERVER_PORT || 3000, async () => {
