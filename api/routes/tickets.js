@@ -12,7 +12,7 @@ module.exports = function (app) {
                         sendMail(client.email, `Serwisant odpowiedział na Twoje zgłoszenie #${ticket.id}`, client.username, `Serwisant odpisał na Twoje zgłoszenie:<br><br><b>${req.body.content}</b>.<br><br>Ta wiadomość została wysłana automatycznie. Aby odpowiedzieć na wiadomość serwisanta, zaloguj się do systemu zgłoszeń klikając <a href='${process.env.base}'>tutaj</a>.`);
                     } else if (req.user.id == ticket.userId) {
                         const technician = await database.getUserById(ticket.technicianId);
-                        sendMail(client.email, `Klient odpowiedział na zgłoszenie #${ticket.id}`, technician.username, `Klient odpisał na zgłoszenie:<br><br><b>${req.body.content}</b>.<br><br>Ta wiadomość została wysłana automatycznie. Aby odpowiedzieć na wiadomość klienta, zaloguj się do systemu zgłoszeń klikając <a href='${process.env.base}'>tutaj</a>.`);
+                        sendMail(technician.email, `Klient odpowiedział na zgłoszenie #${ticket.id}`, technician.username, `Klient odpisał na zgłoszenie:<br><br><b>${req.body.content}</b>.<br><br>Ta wiadomość została wysłana automatycznie. Aby odpowiedzieć na wiadomość klienta, zaloguj się do systemu zgłoszeń klikając <a href='${process.env.base}'>tutaj</a>.`);
                     }
                     return res.json({ success: true });
                 }
