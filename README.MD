@@ -3,6 +3,7 @@
 1. Add `.env` in main directory and provide correct data:
 ```
 base=http://localhost:8080/
+create_test_records=true
 captcha=hcaptcha_key
 email_host=mail.example.com
 email_address=no-reply@example.com

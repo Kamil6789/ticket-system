@@ -125,10 +125,10 @@ app.get('/', (req, res) => {
 
 app.listen(process.env.SERVER_PORT || 3000, async () => {
     console.log('Express is running!');
-
+    database.initializeDatabase();
+    if(process.env.create_test_records == "false") return;
+    
     try {
-        database.initializeDatabase();
-
         // Testowe konta i zgłoszenia
         const technician = await database.createUser('aleksander.nowak@email.com', 'password', 'Aleksander Nowak', 1, Date.now(), Date.now(), '127.0.0.1');
         technician.type = database.ACCOUNT_TYPE.TECHNICIAN;
