@@ -107,7 +107,9 @@ async function getNextTechnician() {
 
                 if (tickets) {
                     tickets.forEach(ticket => {
-                        ticketsCount.set(ticket.technicianId, ticketsCount.get(ticket.technicianId) + 1);
+                        if (ticket.status != TICKET_STATUS.COMPLETED) {
+                            ticketsCount.set(ticket.technicianId, ticketsCount.get(ticket.technicianId) + 1);
+                        }
                     });
                 }
 
