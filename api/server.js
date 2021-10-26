@@ -81,29 +81,31 @@ app.get('/api/users', checkAuth, (req, res) => {
     }
 });
 
-app.listen(process.env.SERVER_PORT || 3000, () => {
+app.listen(process.env.SERVER_PORT || 3000, async () => {
     console.log('Express is running!');
-    database.initializeDatabase().then(async () => {
-        console.log('Database successfully initialized!');
+
+    try {
+        database.initializeDatabase();
 
         // Testowe konta i zgłoszenia
-        await database.createUser('aleksander.nowak@email.com', 'password', 'Aleksander Nowak', 1, Date.now(), Date.now(), '127.0.0.1').then(user => {
-            user.type = database.ACCOUNT_TYPE.TECHNICIAN;
-            database.updateUser(user).catch(error => console.error(error));
-        }).catch(error => console.error(error));
+        const technician = await database.createUser('aleksander.nowak@email.com', 'password', 'Aleksander Nowak', 1, Date.now(), Date.now(), '127.0.0.1');
+        technician.type = database.ACCOUNT_TYPE.TECHNICIAN;
+        database.updateUser(technician);
 
-        await database.createUser('jan.kowalski@email.com', 'hasło123', 'Jan Kowalski', 1, Date.now(), Date.now(), '127.0.0.1').then(async user => {
-            await database.createTicket(user, 'Zgłoszenie 1', 'Opis zgłoszenia').catch(error => console.error(error));
-            await database.createTicket(user, 'Zgłoszenie 2', 'Opis zgłoszenia').then(ticket => {
-                ticket.status = database.TICKET_STATUS.IN_PROGRESS;
-                database.updateTicket(ticket).catch(error => console.error(error));
-            }).catch(error => console.error(error));
-            await database.createTicket(user, 'Zgłoszenie 3', 'Opis zgłoszenia').then(async ticket => {
-                ticket.status = database.TICKET_STATUS.COMPLETED;
-                await database.updateTicket(ticket).catch(error => console.error(error));
-                await database.postComment(ticket, user, 'Komentarz');
-                await database.postComment(ticket, user, 'Kolejny komentarz');
-            }).catch(error => console.error(error));
-        }).catch(error => console.error(error));
-    }).catch(error => console.log('Database failed to initialize!'));
+        const client = await database.createUser('jan.kowalski@email.com', 'hasło123', 'Jan Kowalski', 1, Date.now(), Date.now(), '127.0.0.1');
+        await database.createTicket(client, 'Zgłoszenie 1', 'Opis zgłoszenia');
+        const ticket = await database.createTicket(client, 'Zgłoszenie 2', 'Opis zgłoszenia');
+        ticket.status = database.TICKET_STATUS.IN_PROGRESS;
+        database.updateTicket(ticket);
+
+        const nextTicket = await database.createTicket(client, 'Zgłoszenie 3', 'Opis zgłoszenia');
+        nextTicket.status = database.TICKET_STATUS.COMPLETED;
+        await database.updateTicket(nextTicket);
+        await database.postComment(nextTicket, client, 'Komentarz');
+        await database.postComment(nextTicket, client, 'Kolejny komentarz');
+    
+    } catch(err) {
+        console.log('Test accounts and/or tickets could not be created as they most likely already exist.');
+    }
+
 });
