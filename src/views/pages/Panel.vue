@@ -57,6 +57,8 @@ import ms from "ms"
 import Navbar from "../components/Navbar.vue"
 import Footer from "../components/Footer.vue"
 
+import getTicketStatus from '../../helpers/getTicketStatus.js'
+
 export default {
     name: "Panel",
     components: {
@@ -71,6 +73,7 @@ export default {
             tickets: [],
             users: [],
             ms,
+            getTicketStatus,
             ticket: {
                 title: null,
                 description: null
@@ -86,14 +89,6 @@ export default {
     methods: {
         getUserById(id) {
             return this.users.find(user => user.id == id);
-        },
-        getTicketStatus(status) {
-            switch (status) {
-                case 0: return 'nowe';
-                case 1: return 'w trakcie przeglądu';
-                case 2: return 'rozpatrzone';
-                default: return '';
-            }
         },
         submit_ticket: async function() {
             if (this.ticket.title.length <= 255 && this.ticket.description) {
